@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>DynamicWebMaven</groupId>
+  <artifactId>DynamicWebMaven</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  
+       <!-- organizing properties for grouping purposes -->
+    <properties>
+  	   <!-- platform specific -->
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	<JAVA_HOME>C:\Program Files\Java\JDK1.7.0_45</JAVA_HOME>  	
+    </properties>
+    
+   <!-- minimum maven version required-->
+  <prerequisites>
+        <maven>3.1.1</maven>
+    </prerequisites>  
+  
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+          <executable>${JAVA_HOME}/bin/javac</executable>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+      <plugin>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-maven2-plugin</artifactId>
+			<version>1.4.6</version>
+	 </plugin>
+    </plugins>
+  </build>
+  
+
+    
+    <dependencies>
+    	<dependency>
+    		<groupId>com.sun.faces</groupId>
+    		<artifactId>jsf-api</artifactId>
+    		<version>2.2.5</version>
+    	</dependency>
+    	<dependency>
+    		<groupId>junit</groupId>
+    		<artifactId>junit</artifactId>
+    		<version>3.8.1</version>
+    	</dependency>
+    </dependencies>
+</project>

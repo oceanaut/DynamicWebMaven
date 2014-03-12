@@ -1,0 +1,293 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>DynamicWebMaven</groupId>
+  <artifactId>DynamicWebMaven</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  
+       <!-- organizing properties for grouping purposes -->
+    <properties>
+  	   <!-- platform specific -->
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	<JAVA_HOME>C:\Program Files\Java\jdk1.7.0_40</JAVA_HOME>  	
+  	<cargo.config>C:\logs\cargo_containers</cargo.config>
+  	<tomcat.major>7</tomcat.major>
+  	<glassfish.major>4</glassfish.major> 
+    </properties>
+    
+   <!-- minimum maven version required-->
+  <prerequisites>
+        <maven>3.1.1</maven>
+    </prerequisites>  
+  
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+          <executable>${JAVA_HOME}/bin/javac</executable>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+		    <groupId>org.codehaus.mojo</groupId>
+		    <artifactId>dbunit-maven-plugin</artifactId>
+		    <version>1.0-beta-3</version>		   
+		    <!-- <configuration>
+		        <dataTypeFactoryName>org.dbunit.ext.oracle.OracleDataTypeFactory</dataTypeFactoryName>
+		        <driver>oracle.jdbc.driver.OracleDriver</driver>
+		        <username>hr</username>
+		        <password>hr</password>
+		        <url>jdbc:oracle:thin:@localhost:1521:XE</url>
+		        <src>src/test/resources/sample-data.xml</src>
+		        <type>CLEAN_INSERT</type>
+		        <schema>HR</schema>
+		        <skip>${skipTests}</skip>
+		        <transaction>true</transaction>
+		    </configuration>
+		    <dependencies>
+		        <dependency>
+		            <groupId>com.oracle</groupId>
+		            <artifactId>ojdbc14</artifactId>
+		            <version>10.2.0.2.0</version>
+		        </dependency>
+		    </dependencies> -->
+		</plugin>
+      
+       </plugins>
+  </build>
+  
+  
+  
+<profiles>
+  	<profile>
+    <id>integrationtomcat7x</id>
+    <build>
+      <plugins>
+        
+            <plugin>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-maven2-plugin</artifactId>
+			<version>1.4.6</version>
+		    <configuration>
+				<container>
+                     <containerId>tomcat7x</containerId>  
+                      <output>${cargo.config}/tomcat${tomcat.major}x.log</output>                    							
+             		</container>        
+                                        <configuration>
+                                        		<type>standalone</type>
+                                                <home>${cargo.config}/tomcat7x/container</home>
+                                        </configuration>                                        
+                                   <!--     <deployer>                                               
+                                                 <type>local</type>  
+                                                <deployables>                                                       
+                                                        <deployable>
+                                                                <groupId>${project.groupId}</groupId>
+                                                                <artifactId>${project.artifactId}</artifactId>
+                                                                <type>${project.packaging}</type>
+                                                        </deployable>
+                                                </deployables>
+                                        </deployer>        -->                                
+            </configuration>
+            <!-- Running integration tests with Cargo -->
+            <executions>
+                                        <execution>
+                                                <id>start-container</id>
+                                                <phase>pre-integration-test</phase>
+                                                <goals>
+                                                        <goal>start</goal>
+                                                </goals>
+                                        </execution>
+                                        <execution>
+                                                <id>stop-container</id>
+                                                <phase>post-integration-test</phase>
+                                                <goals>
+                                                        <goal>stop</goal>
+                                                </goals>
+                                        </execution>
+             </executions>
+	 	</plugin>
+        
+      </plugins>
+    </build>
+  </profile>
+  
+   <profile>
+    <id>installtomcat7x</id>
+    <build>
+      <plugins>
+        
+            <plugin>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-maven2-plugin</artifactId>
+			<version>1.4.6</version>
+		    <configuration>
+				<container>
+                     <containerId>tomcat7x</containerId>
+                     							<!-- download zip url -->
+                     			               <zipUrlInstaller>
+                                                        <url>http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.50/bin/apache-tomcat-7.0.50.zip</url>
+                                                        <downloadDir>${cargo.config}/downloads</downloadDir>
+                                                        <extractDir>${cargo.config}/extracts</extractDir>                                                                                                        
+                                                        <proxy>
+									                        <host>193.110.214.14</host>
+									                        <port>8080</port>
+									                    </proxy>
+                                                </zipUrlInstaller>
+                                                  <output>${cargo.config}/tomcat${tomcat.major}x.log</output> 
+        										  <log>${cargo.config}/cargo.log</log>      
+             		</container>        
+                                         <configuration>
+                                        		<type>standalone</type>
+                                                <home>${cargo.config}/tomcat${tomcat.major}x/container</home>
+                                        </configuration>                                       
+                                   <!--     <deployer>                                               
+                                                 <type>local</type>  
+                                                <deployables>                                                       
+                                                        <deployable>
+                                                                <groupId>${project.groupId}</groupId>
+                                                                <artifactId>${project.artifactId}</artifactId>
+                                                                <type>${project.packaging}</type>
+                                                        </deployable>
+                                                </deployables>
+                                        </deployer>        -->                                
+            </configuration>
+           <!--  Running integration tests with Cargo 
+            <executions>
+                                        <execution>
+                                                <id>start-container</id>
+                                                <phase>pre-integration-test</phase>
+                                                <goals>
+                                                        <goal>start</goal>
+                                                </goals>
+                                        </execution>
+                                        <execution>
+                                                <id>stop-container</id>
+                                                <phase>post-integration-test</phase>
+                                                <goals>
+                                                        <goal>stop</goal>
+                                                </goals>
+                                        </execution>
+             </executions> --> 
+             
+	 	</plugin>
+        
+      </plugins>
+    </build>
+  </profile>
+  
+  
+   <profile>
+    <id>installjetty9x</id>
+    <build>
+      <plugins>
+        
+            <plugin>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-maven2-plugin</artifactId>
+			<version>1.4.6</version>
+		    <configuration>
+				<container>
+                     <containerId>glassfish4x</containerId>
+                     							<!-- download zip url -->
+                     			               <zipUrlInstaller>
+                                                        <url>http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.1.1.v20140108/jetty-distribution-9.1.1.v20140108.tar.gz</url>
+                                                        <downloadDir>${cargo.config}/downloads</downloadDir>
+                                                        <extractDir>${cargo.config}/extracts</extractDir>                                                                                                         
+                                                        <proxy>
+									                        <host>193.110.214.14</host>
+									                        <port>8080</port>
+									                    </proxy>
+                                                </zipUrlInstaller>                                         
+             		</container>        
+                                        <configuration>
+                                        		<type>standalone</type>
+                                                <home>${cargo.config}/jetty9x/container</home>
+                                        </configuration>                                       
+                                                            
+            </configuration> 
+             
+	 	</plugin>
+        
+      </plugins>
+    </build>
+  </profile>
+  
+  
+   <profile>
+    <id>installresin4x</id>
+    <build>
+      <plugins>
+        
+            <plugin>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-maven2-plugin</artifactId>
+			<version>1.4.6</version>
+		    <configuration>
+				<container>
+                     <containerId>glassfish4x</containerId>
+                     							<!-- download zip url -->
+                     			               <zipUrlInstaller>
+                                                        <url>http://www.caucho.com/download/resin-4.0.37.zip</url>
+                                                        <downloadDir>${cargo.config}/downloads</downloadDir>
+                                                        <extractDir>${cargo.config}/extracts</extractDir>                                                                                                         
+                                                        <!-- <proxy>
+									                        <host>193.110.214.14</host>
+									                        <port>8080</port>
+									                    </proxy> -->
+                                                </zipUrlInstaller>                                         
+             		</container>        
+                                        <configuration>
+                                        		<type>standalone</type>
+                                                <home>${cargo.config}/resin4x/container</home>
+                                        </configuration>                                       
+                                                            
+            </configuration> 
+             
+	 	</plugin>
+        
+      </plugins>
+    </build>
+  </profile>
+  
+</profiles>
+
+
+ 
+
+
+
+
+    
+    <dependencies>
+    	<dependency>
+    		<groupId>com.sun.faces</groupId>
+    		<artifactId>jsf-api</artifactId>
+    		<version>2.2.5</version>
+    	</dependency>
+    	<dependency>
+    		<groupId>junit</groupId>
+    		<artifactId>junit</artifactId>
+    		<version>4.10</version>
+    	</dependency>
+    	<!-- 
+    	<dependency>
+		    <groupId>com.oracle</groupId>
+		    <artifactId>ojdbc14</artifactId>
+		    <version>10.2.0.4.0</version>
+		</dependency> -->		
+    </dependencies>
+    
+    
+</project>
